@@ -58,12 +58,6 @@ impl Grid {
         for coord in &mut self.coords {
             for line in &self.vent_lines {
                 if line.contains_coord(coord) {
-                    /*
-                    println!(
-                        "{},{} intersects {},{}->{},{}",
-                        coord.x, coord.y, line.start.x, line.start.y, line.end.x, line.end.y
-                    );
-                    */
                     coord.increment_cross_count();
                     continue;
                 }
