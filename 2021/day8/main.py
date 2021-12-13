@@ -1,5 +1,6 @@
 from pprint import pprint
 
+# Part 1
 with open("input.txt") as f:
     data = [x.split(" | ")[1] for x in filter(lambda x: bool(x), f.read().split("\n"))]
 
@@ -10,4 +11,4 @@ for output in data:
         if len(segment) in UNIQUE_VALUES:
             total += 1
 
-print(total)
+print(f"The answer for part 1 is {total}")
