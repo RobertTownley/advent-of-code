@@ -1,4 +1,4 @@
-with open("sample.txt") as f:
+with open("input.txt") as f:
     data = f.read().split("\n")[:-1]
 
 
@@ -24,6 +24,8 @@ class OctopusMap:
         self.octopi = {}
         self.flashes = 0
         self.build_map()
+        self.steps = 0
+        self.all_flashed_this_step = False
 
     def __str__(self):
         rows = []
@@ -45,6 +47,8 @@ class OctopusMap:
         return octopi
 
     def conduct_step(self):
+        self.steps += 1
+
         for o in self.all_octopi:
             o.has_flashed_this_step = False
             o.energy_level += 1
@@ -68,6 +72,10 @@ class OctopusMap:
             if o.has_flashed_this_step:
                 o.energy_level = 0
 
+        # Part 2
+        if all([o.has_flashed_this_step for o in self.all_octopi]):
+            self.all_flashed_this_step = True
+
     def get_adjacents(self, o: Octopus):
         adjacents = []
 
@@ -87,3 +95,9 @@ for i in range(0, 100):
     octomap.conduct_step()
     print(octomap)
     print(f"Step: {i}, Flashes: {octomap.flashes}")
+
+
+# Part 2
+while not octomap.all_flashed_this_step:
+    octomap.conduct_step()
+    print(octomap.steps)
