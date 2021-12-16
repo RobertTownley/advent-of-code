@@ -32,12 +32,8 @@ class Paper:
         for dot in self.dots:
             if not self.dot_map.get(dot.x):
                 self.dot_map[dot.x] = {}
-            if dot.x > self.max_x:
-                self.max_x = dot.x
-            if dot.y > self.max_y:
-                self.max_y = dot.y
             self.dot_map[dot.x][dot.y] = dot
-
+        self.compute_max()
         self.fill_blank()
 
     def fill_blank(self):
@@ -47,6 +43,15 @@ class Paper:
             for y in range(0, self.max_y + 1):
                 if not self.dot_map[x].get(y):
                     self.dot_map[x][y] = "."
+
+    def compute_max(self):
+        self.max_x = 0
+        self.max_y = 0
+        for dot in self.dots:
+            if dot.x > self.max_x:
+                self.max_x = dot.x
+            if dot.y > self.max_y:
+                self.max_y = dot.y
 
     def follow_instruction(self, instruction: Instruction):
         if instruction.direction == "y":
@@ -62,6 +67,7 @@ class Paper:
                 self.dot_map[dot.x][dot.y] = "."
                 dot.x = dot.x - (2 * (dot.x - instruction.amount))
                 self.dot_map[dot.x][dot.y] = dot
+        self.compute_max()
 
     @property
     def dots_visible(self):
@@ -85,9 +91,13 @@ class Paper:
 instructions = [Instruction(text) for text in instructions_text.split("\n")[:-1]]
 
 # Part 1
-paper = Paper(dots)
-paper.follow_instruction(instructions[0])
-print(str(paper).count("#"))
-print(f"There are {str(paper).count('#')} dots visible")
+# paper = Paper(dots)
+# paper.follow_instruction(instructions[0])
+# print(f"There are {str(paper).count('#')} dots visible")
 
 # Part 2
+paper = Paper(dots)
+print(paper)
+for instruction in instructions:
+    paper.follow_instruction(instruction)
+    print(paper)
