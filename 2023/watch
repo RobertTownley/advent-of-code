@@ -1,0 +1,2 @@
+#!/bin/sh
+nodemon --exec "python 2.py" ./*.py
