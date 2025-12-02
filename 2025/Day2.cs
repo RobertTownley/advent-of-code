@@ -95,7 +95,6 @@ public class Day2
             {
                 if (!isValidTwo(value))
                 {
-                    Console.WriteLine($"Invalid: {value}");
                     result += value;
                 }
 
