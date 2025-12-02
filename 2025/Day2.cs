@@ -46,10 +46,9 @@ public class Day2
     {
         string valueStr = value.ToString();
 
-        for (int size = 0; size < valueStr.Length; size++)
+        int maxSize = valueStr.Length / 2;
+        for (int size = 0; size < maxSize; size++)
         {
-            // Split the string into chunks of this length and 
-            // see if they all match
             List<string> chunks = chunkify(valueStr, size + 1);
             if (chunks.Count() == 1)
                 continue;
