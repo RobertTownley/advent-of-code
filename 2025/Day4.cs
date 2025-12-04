@@ -16,7 +16,6 @@ public class Day4
 
     private static Grid FormGrid()
     {
-
         var grid = new Grid();
         string input = ReadInput();
         string[] lines = input.Split("\n", StringSplitOptions.RemoveEmptyEntries);
@@ -41,9 +40,13 @@ public class Day4
         var grid = FormGrid();
 
         for (int y = 0; y < grid.Count; y++)
+        {
             for (int x = 0; x < grid[y].Count; x++)
+            {
                 if (canBeRemoved(y, x, grid))
                     result += 1;
+            }
+        }
         Console.WriteLine($"Part 1 Answer: {result}");
     }
 
@@ -56,9 +59,14 @@ public class Day4
         {
             var toRemove = new List<int[]>();
             for (int y = 0; y < grid.Count; y++)
+            {
                 for (int x = 0; x < grid[y].Count; x++)
+                {
                     if (canBeRemoved(y, x, grid))
                         toRemove.Add([y, x]);
+
+                }
+            }
 
             if (toRemove.Count() > 0)
                 foreach (int[] pairing in toRemove)
@@ -69,7 +77,6 @@ public class Day4
                     {
                         result += 1;
                         grid[y][x] = false;
-
                     }
                 }
             else
@@ -95,11 +102,13 @@ public class Day4
             for (int deltaX = -1; deltaX < 2; deltaX++)
             {
                 int xCoord = x + deltaX;
+
                 if (deltaX == 0 && deltaY == 0)
                     continue;
 
                 if (!grid[yCoord].ContainsKey(xCoord))
                     continue;
+
                 if (grid[yCoord][xCoord])
                     rollCount += 1;
             }
