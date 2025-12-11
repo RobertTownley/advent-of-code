@@ -9,7 +9,7 @@ public class Day7
     private static string[] ReadInput()
     {
         return System
-            .IO.File.ReadAllText("Day7_Sample.txt")
+            .IO.File.ReadAllText("Day7_Input.txt")
             .Split("\n", StringSplitOptions.RemoveEmptyEntries);
     }
 
@@ -17,12 +17,10 @@ public class Day7
     {
         int result = 0;
         var beamIndexes = new HashSet<int>();
+        var lines = ReadInput();
+        beamIndexes.Add(lines[0].IndexOf("S"));
         foreach (string line in ReadInput())
         {
-            if (line.IndexOf("S") != -1)
-            {
-                beamIndexes.Add(line.IndexOf("S"));
-            }
             foreach (int beamIndex in new HashSet<int>(beamIndexes))
             {
                 if (line[beamIndex] == '^')
@@ -44,30 +42,30 @@ public class Day7
 
     private static void SolvePart2()
     {
-        long result = 0;
         var lines = ReadInput();
-        var beamProbs = new List<int>(Enumerable.Repeat(0, lines[0].Length));
-        foreach (string line in lines.Take(5))
+        var beamProbs = new List<long>(Enumerable.Repeat(0L, lines[0].Length));
+        beamProbs[lines[0].IndexOf("S")] = 1;
+
+        foreach (string line in lines)
         {
-            Console.WriteLine(line);
-            if (line.IndexOf("S") != -1)
+            var newBeamProbs = new List<long>(Enumerable.Repeat(0L, beamProbs.Count));
+
+            for (int i = 0; i < beamProbs.Count; i++)
             {
-                beamProbs[line.IndexOf("S")] += 1;
+                long beamCount = beamProbs[i];
+                if (beamCount > 0 && line[i] == '^')
+                {
+                    newBeamProbs[i - 1] += beamCount;
+                    newBeamProbs[i + 1] += beamCount;
+                }
+                else
+                    newBeamProbs[i] += beamCount;
             }
 
-            for (int i = 0; i < beamProbs.Count(); i++)
-            {
-                int beamProb = beamProbs[i];
-                if (line[i] == '^')
-                {
-                    beamProbs[i] -= 1;
-                    beamProbs[i - 1] += 1;
-                    beamProbs[i + 1] += 1;
-                }
-            }
-            Console.WriteLine(string.Join("", beamProbs));
+            beamProbs = newBeamProbs;
         }
-        result = beamProbs.Sum();
+
+        long result = beamProbs.Sum();
         Console.WriteLine($"Part 2 Answer: {result}");
     }
 }
