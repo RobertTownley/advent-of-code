@@ -18,7 +18,7 @@ public class Day11
 
     private static void SolvePart1()
     {
-        int result = 0;
+        long result = 0;
         var lines = ReadInput();
         var map = new Map();
         foreach (var line in lines)
@@ -30,15 +30,16 @@ public class Day11
         Console.WriteLine($"Part 1 Answer: {result}");
     }
 
-    private static Dictionary<string, int> pathCounts = new Dictionary<string, int>();
+    private static Dictionary<string, long> pathCounts = new Dictionary<string, long>();
 
-    private static int findPathsTo(string start, string end, Map map, string[] requiredVisits)
+    private static long findPathsTo(string start, string end, Map map, string[] requiredVisits)
     {
-        var pathKey = $"{start}-{end}-{string.Join("_", requiredVisits)}";
+        var sortedRequirements = requiredVisits.OrderBy(x => x).ToArray();
+        var pathKey = $"{start}-{end}-{string.Join("_", sortedRequirements)}";
         if (pathCounts.ContainsKey((pathKey)))
             return pathCounts[pathKey];
 
-        int counts = 0;
+        long counts = 0;
         foreach (var node in map[start])
         {
             if (node == end && requiredVisits.Length == 0)
