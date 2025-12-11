@@ -33,8 +33,7 @@ public class Day11
 
     private static long findPathsTo(string start, string end, Map map, string[] requiredVisits)
     {
-        var sortedRequirements = requiredVisits.OrderBy(x => x).ToArray();
-        var pathKey = $"{start}-{end}-{string.Join("_", sortedRequirements)}";
+        var pathKey = $"{start}-{end}-{string.Join("_", requiredVisits)}";
         if (pathCounts.ContainsKey((pathKey)))
             return pathCounts[pathKey];
 
