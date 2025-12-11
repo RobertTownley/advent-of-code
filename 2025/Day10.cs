@@ -5,7 +5,7 @@ public class Day10
 {
     public static void Solve()
     {
-        SolvePart1();
+        // SolvePart1();
         SolvePart2();
     }
 
@@ -20,7 +20,7 @@ public class Day10
     {
         int result = 0;
         var lines = ReadInput();
-        foreach (var line in lines.Take(1))
+        foreach (var line in lines)
         {
             var (diagram, availableButtons, _) = getOptions(line);
             result += exploreButtonPresses(diagram, availableButtons);
@@ -82,21 +82,65 @@ public class Day10
         if (joltages.All(j => j == 0))
             return 0;
 
-        int pressCount = 1;
-        while (true)
+        int[] currentState = new int[joltages.Length];
+        int totalPresses = 0;
+
+        while (!currentState.SequenceEqual(joltages))
         {
-            var possiblePresses = getCombinations(availableButtons, pressCount);
-            foreach (var sequence in possiblePresses)
+            int bestButton = -1;
+            double bestEfficiency = 0;
+
+            for (int i = 0; i < availableButtons.Length; i++)
             {
-                var joltage = computeJoltageAfterPresses(sequence, joltages.Length);
-                if (joltage.SequenceEqual(joltages))
+                int positionsHelped = 0;
+                int minRemaining = int.MaxValue;
+                bool canPress = true;
+
+                for (int j = 0; j < joltages.Length; j++)
                 {
-                    Console.WriteLine($"FOUND AT {pressCount}");
-                    return pressCount;
+                    if (availableButtons[i][j])
+                    {
+                        int remaining = joltages[j] - currentState[j];
+                        if (remaining <= 0)
+                        {
+                            canPress = false;
+                            break;
+                        }
+                        positionsHelped++;
+                        minRemaining = Math.Min(minRemaining, remaining);
+                    }
+                }
+
+                if (canPress && positionsHelped > 0)
+                {
+                    double efficiency = positionsHelped * Math.Min(minRemaining, 10);
+
+                    if (efficiency > bestEfficiency)
+                    {
+                        bestEfficiency = efficiency;
+                        bestButton = i;
+                    }
                 }
             }
-            pressCount += 1;
+
+            if (bestButton == -1)
+                return -1;
+
+            int timesToPress = int.MaxValue;
+            for (int j = 0; j < joltages.Length; j++)
+                if (availableButtons[bestButton][j])
+                {
+                    int remaining = joltages[j] - currentState[j];
+                    timesToPress = Math.Min(timesToPress, remaining);
+                }
+
+            for (int j = 0; j < joltages.Length; j++)
+                if (availableButtons[bestButton][j])
+                    currentState[j] += timesToPress;
+            totalPresses += timesToPress;
         }
+
+        return totalPresses;
     }
 
     public static int[] computeJoltageAfterPresses(List<Button> sequence, int size)
@@ -130,7 +174,6 @@ public class Day10
 
     public static IEnumerable<List<Button>> getCombinations(Button[] availableButtons, int size)
     {
-        Console.WriteLine($"Looking for combos of size {size}");
         if (size == 0)
         {
             yield return new List<Button>();
@@ -138,12 +181,8 @@ public class Day10
         }
 
         if (availableButtons.Length == 0)
-        {
             yield break;
-        }
 
-        // For combinations with repetition, we generate all possible sequences
-        // by choosing any button for each position using an iterative approach
         int n = availableButtons.Length;
         int totalCombinations = (int)Math.Pow(n, size);
 
@@ -152,8 +191,7 @@ public class Day10
             var combination = new List<Button>();
             int index = i;
 
-            // Convert the index to a base-n number to get the button sequence
-            for (int pos = 0; pos < size; pos++)
+            for (int j = 0; j < size; j++)
             {
                 int buttonIndex = index % n;
                 combination.Add(availableButtons[buttonIndex]);
@@ -168,10 +206,8 @@ public class Day10
     {
         int result = 0;
         var lines = ReadInput();
-        int counter = 1;
         foreach (var line in lines)
         {
-            Console.WriteLine($"Line {counter}/{lines.Length}: {line}");
             var (_, availableButtons, joltages) = getOptions(line);
             result += exploreJoltages(joltages, availableButtons);
         }

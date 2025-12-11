@@ -4,6 +4,6 @@ class Program
     {
         Console.WriteLine("Advent of Code 2025");
         Console.WriteLine("===================\n");
-        Day10.Solve();
+        Day11.Solve();
     }
 }
