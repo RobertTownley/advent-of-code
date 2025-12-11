@@ -2,7 +2,6 @@ using Map = System.Collections.Generic.Dictionary<string, string[]>;
 
 public class Day11
 {
-    // Tried 1906355968
     public static void Solve()
     {
         SolvePart1();
