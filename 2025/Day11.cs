@@ -2,6 +2,7 @@ using Map = System.Collections.Generic.Dictionary<string, string[]>;
 
 public class Day11
 {
+    // Tried 1906355968
     public static void Solve()
     {
         SolvePart1();
@@ -25,68 +26,41 @@ public class Day11
             var parts = line.Split(":", 2);
             map[parts[0]] = parts[1].Split(" ", StringSplitOptions.RemoveEmptyEntries);
         }
-        result = findPathsTo("you", "out", map);
+        result = findPathsTo("you", "out", map, []);
         Console.WriteLine($"Part 1 Answer: {result}");
     }
 
     private static Dictionary<string, int> pathCounts = new Dictionary<string, int>();
-    private static Dictionary<string, (int, bool, bool)> pathDetails =
-        new Dictionary<string, (int, bool, bool)>();
-    private static Dictionary<string, bool> visitsDac = new Dictionary<string, bool>();
-    private static Dictionary<string, bool> visitsFft = new Dictionary<string, bool>();
 
-    private static int findPathsTo(string start, string end, Map map)
+    private static int findPathsTo(string start, string end, Map map, string[] requiredVisits)
     {
-        var pathKey = $"{start}-{end}";
+        var pathKey = $"{start}-{end}-{string.Join("_", requiredVisits)}";
         if (pathCounts.ContainsKey((pathKey)))
             return pathCounts[pathKey];
 
         int counts = 0;
         foreach (var node in map[start])
         {
-            if (map[node].Contains(end))
+            if (node == end && requiredVisits.Length == 0)
             {
                 counts += 1;
             }
+            else if (!map.ContainsKey(node))
+            {
+                continue;
+            }
             else
             {
-                counts += findPathsTo(node, end, map);
+                var newRequirements = requiredVisits.Where(n => n != node).ToArray();
+                counts += findPathsTo(node, end, map, newRequirements);
             }
         }
         pathCounts[pathKey] = counts;
         return counts;
     }
 
-    private static (int, bool, bool) findPathsToWithStops(string start, string end, Map map)
-    {
-        var pathKey = $"{start}-{end}";
-        if (pathDetails.ContainsKey((pathKey)))
-            return pathDetails[pathKey];
-
-        int counts = 0;
-        bool visitsDac = false;
-        bool visitsFft = false;
-        foreach (var node in map[start])
-        {
-            if (map[node].Contains(end))
-            {
-                counts += 1;
-                visitsDac = node == "dac" || end == "dac";
-                visitsFft = node == "fft" || end == "fft";
-            }
-            else
-            {
-                (int toAdd, visitsDac, visitsFft) = findPathsToWithStops(node, end, map);
-                counts += toAdd;
-            }
-        }
-        pathDetails[pathKey] = (counts, visitsDac, visitsFft);
-        return pathDetails[pathKey];
-    }
-
     private static void SolvePart2()
     {
-        int result = 0;
         var lines = ReadInput();
         var map = new Map();
         foreach (var line in lines)
@@ -94,7 +68,7 @@ public class Day11
             var parts = line.Split(":", 2);
             map[parts[0]] = parts[1].Split(" ", StringSplitOptions.RemoveEmptyEntries);
         }
-        (result, _, _) = findPathsToWithStops("svr", "out", map);
+        long result = findPathsTo("svr", "out", map, ["fft", "dac"]);
         Console.WriteLine($"Part 2 Answer: {result}");
     }
 }
