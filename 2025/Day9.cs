@@ -1,3 +1,8 @@
+// Disclaimer: I had to ask for non-trivial LLM help on part 2.
+//
+// Also for this one I'm not even sure I got there
+// I didn't submit my part 2 answer to AoC though
+
 public class Day9
 {
     public static void Solve()
